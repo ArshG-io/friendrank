@@ -1044,43 +1044,41 @@ elif page == "Self Evaluation":
                     friend_index = i
                     break
             
+            # Store self-evaluation regardless of whether the friend exists
+            self_eval = {
+                'name': friend_name,
+                'email': friend_email,
+                'reliability': self_reliability,
+                'emotional_support': self_emotional_support,
+                'fun_factor': self_fun_factor,
+                'frequency': self_frequency,
+                'dart_time': self_dart_time,
+                'best_quality': self_best_quality,
+                'shared_memory': self_shared_memory,
+                'improvement': self_improvement,
+                'submission_date': datetime.now().strftime('%Y-%m-%d'),
+                'reviewed': False,
+                'in_friends_list': friend_exists
+            }
+            
+            # Initialize self_evals in session state if it doesn't exist
+            if 'self_evals' not in st.session_state:
+                st.session_state.self_evals = {}
+            
+            # Store evaluation under friend's name
+            st.session_state.self_evals[friend_name] = self_eval
+            
+            # Mark in the friend's record that they've submitted a self-eval (if the friend exists)
             if friend_exists:
-                # Store self-evaluation
-                self_eval = {
-                    'name': friend_name,
-                    'email': friend_email,
-                    'reliability': self_reliability,
-                    'emotional_support': self_emotional_support,
-                    'fun_factor': self_fun_factor,
-                    'frequency': self_frequency,
-                    'dart_time': self_dart_time,
-                    'best_quality': self_best_quality,
-                    'shared_memory': self_shared_memory,
-                    'improvement': self_improvement,
-                    'submission_date': datetime.now().strftime('%Y-%m-%d'),
-                    'reviewed': False
-                }
-                
-                # Initialize self_evals in session state if it doesn't exist
-                if 'self_evals' not in st.session_state:
-                    st.session_state.self_evals = {}
-                
-                # Store evaluation under friend's name
-                st.session_state.self_evals[friend_name] = self_eval
-                
-                # Mark in the friend's record that they've submitted a self-eval
                 st.session_state.friends[friend_index]['self_eval_submitted'] = True
-                
-                # Save data
                 save_friends_data()
-                save_self_evals()
-                
-                st.success("Thank you for submitting your self-evaluation! Your input has been recorded.")
-            else:
-                st.error("Sorry, we couldn't find you in the friends list. Please check your name or ask to be added first.")
+            
+            # Save self-evaluation data
+            save_self_evals()
+            
+            st.success("Thank you for submitting your self-evaluation! Your input has been recorded.")
     
     st.markdown("</div>", unsafe_allow_html=True)
-
 # Admin Panel Page
 elif page == "Admin Panel":
     st.markdown("<div class='card'>", unsafe_allow_html=True)
